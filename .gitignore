@@ -1,0 +1,9 @@
+/__pycache__
+.vercel
+venv
+agent-venv
+/**/__pycache__/
+.env
+debug_chart_code.py
+/temp
+*.pyc
