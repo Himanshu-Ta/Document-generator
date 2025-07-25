@@ -8,6 +8,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import StreamingResponse, JSONResponse, RedirectResponse
+from fastapi.middleware.cors import CORSMiddleware  # Import the CORS middleware
 from fastapi.openapi.utils import get_openapi
 
 # Assuming these are in separate files as in the original code
@@ -60,6 +61,18 @@ app = FastAPI(
     """,
     version="1.0.0",
 )
+
+# --- CORS (Cross-Origin Resource Sharing) Middleware ---
+# This is the key change to fix the 403 Forbidden error on platforms like Render.
+# It allows web pages from any origin to make requests to your API.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
+
 
 # --- Directory Setup ---
 BASE_DIR = Path(__file__).resolve().parent
