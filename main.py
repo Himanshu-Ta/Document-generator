@@ -63,11 +63,17 @@ app = FastAPI(
 )
 
 # --- CORS (Cross-Origin Resource Sharing) Middleware ---
-# This is the key change to fix the 403 Forbidden error on platforms like Render.
-# It allows web pages from any origin to make requests to your API.
+# Define the specific origins that are allowed to make requests.
+# This is a more secure and reliable approach for deployment than a wildcard (*).
+origins = [
+    "https://document-generator-cz1m.onrender.com", # Your production frontend
+    "http://localhost",
+    "http://localhost:8000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
     allow_headers=["*"],  # Allows all headers
@@ -113,6 +119,13 @@ async def root():
     Redirects the root URL to the API documentation.
     """
     return RedirectResponse(url="/docs")
+
+@app.get("/health", tags=["Health Check"], include_in_schema=False)
+async def health_check():
+    """
+    A simple endpoint that hosting platforms can use to verify the service is running.
+    """
+    return {"status": "ok"}
 
 
 @app.post(
